@@ -57,7 +57,6 @@ def generate_response(user_message):
     conversation_history = load_conversation_history()
     # 사용자의 메시지를 포함한 프롬프트를 생성하여 OpenAI API에 전달하고, 챗봇의 응답을 반환합니다.
     prompt_with_history = combine_prompt(user_message, conversation_history)
-    print(prompt_with_history)
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-0125",
         messages=[
@@ -65,6 +64,8 @@ def generate_response(user_message):
             {"role": "user", "content": user_message}
         ]
     )
+    print(prompt_with_history)
+    print(f"user: {user_message}")
     # 대화 기록에 사용자의 메시지와 챗봇의 응답 추가
     add_to_conversation_history(conversation_history, user_message, response.choices[0].message['content'])
     return response.choices[0].message['content']
@@ -90,7 +91,7 @@ def combine_prompt(prompt, conversation_history):
         for line in conversation_history:
             prompt_with_history += f"\n{line}"
     persona_string = '\n'.join(persona)
-    prompt_with_history = persona_string + '\n' + prompt_with_history
+    prompt_with_history = persona_string + '\n'
     return prompt_with_history
 
 

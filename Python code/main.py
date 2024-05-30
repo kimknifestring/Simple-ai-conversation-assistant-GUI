@@ -22,7 +22,7 @@ class MainApp(QWidget):
         
         self.layout = QVBoxLayout()
         
-        self.title_label = QLabel("Chat App")
+        self.title_label = QLabel("임시 GUI")
         self.title_label.setAlignment(Qt.AlignCenter)
         self.title_label.setStyleSheet("""
             font-size: 24px; 
