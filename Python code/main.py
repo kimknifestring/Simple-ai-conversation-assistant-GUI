@@ -7,6 +7,10 @@ import threading
 from animation import ResizingBot
 from taking import record_audio,transcribe_audio
 from conversation import generate_response
+import re
+import pyttsx3
+
+
 
 class MainApp(QWidget):
     def __init__(self):
@@ -68,9 +72,10 @@ class MainApp(QWidget):
         if user_message:
             gen_respon = generate_response(user_message)
             response = f"\"{gen_respon}\"" 
-            self.text_edit.append(f"<div style='color: white; background-color: blue; border-radius: 10px; padding: 10px;'>User: {user_message}</div>")
-            self.text_edit.append(f"<div style='color: black; background-color: #eee; border-radius: 10px; padding: 10px;'>{response}</div>")
+            self.text_edit.append(f"User: {user_message}")
+            self.text_edit.append(f"Bot:{response}")
             self.input_line.clear()
+
     
     def record_and_transcribe(self):
         def record_thread():
@@ -128,6 +133,26 @@ class ImageWindow(QWidget):
 
     def mouseReleaseEvent(self, event):
         self.drag_position = None
+
+"""class ImageWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft();
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == Qt.LeftButton and self.drag_position:
+            self.move(event.globalPos() - self.drag_position)
+
+    def mouseReleaseEvent(self, event):
+        self.drag_position = None"""
 
 
 app = QApplication(sys.argv)

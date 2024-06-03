@@ -43,13 +43,17 @@ def start_conversation(prompt):
     """
     conversation_history = load_conversation_history()  # 기존 대화 기록 불러오기
     prompt_with_history = combine_prompt(prompt, conversation_history)  # 대화 기록과 함께 프롬프트 생성
-    response = openai.ChatCompletion.create(
+    try:
+        response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-0125",
         messages=[
             {"role": "system", "content": prompt_with_history},  # 시스템 역할로 프롬프트 제공
             {"role": "user", "content": "안녕? 너는 누구니?"}  # 사용자 역할로 첫 질문 제공
         ]
     )
+    except openai.error.APIError:
+        print("유효하지 않은 유니코드 생성됨.")
+
     return response.choices[0].message['content']  # 응답 내용 반환
     
 def generate_response(user_message):
@@ -58,16 +62,22 @@ def generate_response(user_message):
     # 사용자의 메시지를 포함한 프롬프트를 생성하여 OpenAI API에 전달하고, 챗봇의 응답을 반환합니다.
     prompt_with_history = combine_prompt(user_message, conversation_history)
     print(prompt_with_history)
-    response = openai.ChatCompletion.create(
+    try:
+        response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-0125",
+        temperature = 1.2,
+        presence_penalty =1,
         messages=[
             {"role": "system", "content": prompt_with_history},
             {"role": "user", "content": user_message}
         ]
     )
+        add_to_conversation_history(conversation_history, user_message, response.choices[0].message['content'])
+        return response.choices[0].message['content']
+    except openai.error.APIError:
+        return("유효하지 않은 유니코드 생성됨.")
     # 대화 기록에 사용자의 메시지와 챗봇의 응답 추가
-    add_to_conversation_history(conversation_history, user_message, response.choices[0].message['content'])
-    return response.choices[0].message['content']
+    
 
 def load_conversation_history():
     try:
