@@ -4,11 +4,15 @@ from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel, QWidget, QTextEdi
 import sys
 import os
 import threading
+import re
 from animation import ResizingBot
+from PyQt5.QtWidgets import QApplication
 from taking import record_audio,transcribe_audio
 from conversation import generate_response
 import re
 import pyttsx3
+from PyQt5.QtCore import QPoint
+
 
 
 
@@ -26,7 +30,7 @@ class MainApp(QWidget):
         
         self.layout = QVBoxLayout()
         
-        self.title_label = QLabel("Chat App")
+        self.title_label = QLabel("임시 GUI")
         self.title_label.setAlignment(Qt.AlignCenter)
         self.title_label.setStyleSheet("""
             font-size: 24px; 
@@ -72,8 +76,15 @@ class MainApp(QWidget):
         if user_message:
             gen_respon = generate_response(user_message)
             response = f"\"{gen_respon}\"" 
+
+            pattern = r"(.*)\{([^}]*)\}"
+            match = re.match(pattern, response)
+            if match:
+                dialogue = match.group(1).strip()
+                emotion = match.group(2).strip()
+
             self.text_edit.append(f"User: {user_message}")
-            self.text_edit.append(f"Bot:{response}")
+            self.text_edit.append(f"Bot:{dialogue}")
             self.input_line.clear()
 
     
@@ -114,6 +125,14 @@ class ImageWindow(QWidget):
 
 
         self.image_label = ResizingBot(image_path)
+        
+        screen_geometry = QApplication.desktop().availableGeometry()
+        x = max(0, screen_geometry.width() - self.width()-500)
+        y = max(0, screen_geometry.height() - self.height()-250)
+
+        self.move(x, y)
+        self.image_position = QPoint(x,y)  # 이미지 위치 조정
+
         layout.addWidget(self.image_label)
 
         self.setLayout(layout)
@@ -131,7 +150,7 @@ class ImageWindow(QWidget):
         if event.buttons() == Qt.LeftButton and self.drag_position:
             self.move(event.globalPos() - self.drag_position)
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event): 
         self.drag_position = None
 
 """class ImageWindow(QWidget):
@@ -158,7 +177,7 @@ class ImageWindow(QWidget):
 app = QApplication(sys.argv)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-img_file = os.path.join(script_dir, '../imgs/test.png')
+img_file = os.path.join(script_dir, '../imgs/soso.png')
 image_window = ImageWindow(img_file)
 image_window.show()
 

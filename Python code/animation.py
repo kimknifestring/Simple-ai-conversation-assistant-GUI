@@ -15,8 +15,8 @@ class ResizingBot(QLabel):
         self.setPixmap(self.original_pixmap)
 
         # 이미지 크기 조정 애니메이션
-        new_width = int(self.original_pixmap.width() * 3.5)
-        new_height = int(self.original_pixmap.height() * 3.5)
+        new_width = int(self.original_pixmap.width() * 1.5)
+        new_height = int(self.original_pixmap.height() * 1.5)
 
         # QLabel의 크기 조정
         self.setFixedSize(new_width, new_height)
