@@ -86,7 +86,13 @@ class MainApp(QWidget):
             self.text_edit.append(f"User: {user_message}")
             self.text_edit.append(f"Bot:{dialogue}")
             self.input_line.clear()
+            threading.Thread(target=self.text_to_speech, args=(dialogue,)).start()
 
+    def text_to_speech(self,text):
+        engine = pyttsx3.init()
+        engine.setProperty('rate', 150)  # 음성 속도 조절 (기본값은 200)
+        engine.say(text)
+        engine.runAndWait()
     
     def record_and_transcribe(self):
         def record_thread():
